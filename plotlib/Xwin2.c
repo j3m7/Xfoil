@@ -269,7 +269,7 @@ GWXWINOPEN(xstart, ystart, xsize, ysize)
    XGCValues            gcv;
    unsigned long        gcv_mask;
 
-   char *fontname = "6x12";
+   char *fontname = "fixed";
  
 
 /* Define a crosshair cursor */
