@@ -1,27 +1,8 @@
 
 SRC = ../src
-PLTOBJ = /home/codes/Xplot/libPlt.a
+PLTOBJ = ../libplt/libPlt.a
 
-#========================================
-#  Default compiler flags
-FC = f77
-FLG = -O
-PLTLIB = -lX11
-FTNLIB =
-
-#========================================
-#  Uncomment for Intel Fortran Compiler
-FC = ifort
-FLG = -O -fpe0 -CB
-PLTLIB = -L/usr/X11R6/lib -lX11
-FTNLIB = 
-
-#  Additional IFC stuff needed on MIT's Athena system
-#FC = ifc
-#FTNLIB = -Vaxlib /usr/lib/C-ctype.o /usr/lib/C_name.o /usr/lib/ctype-info.o
-
-#========================================
-
+include ../config.make
 
 OS: osgen osmap.o
 

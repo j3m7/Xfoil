@@ -4,10 +4,7 @@
 # M.Drela
 #*********************************************************
 
-
 SHELL = sh
-BINDIR = /home/codes/bin/
-#BINDIR = .
 
 PROGS = xfoil pplot pxplot
 
@@ -19,142 +16,42 @@ xsolve.o xbl.o xblsys.o xpol.o xplots.o pntops.o xgeom.o xutils.o modify.o \
 blplot.o polplt.o aread.o naca.o spline.o plutil.o iopol.o gui.o sort.o \
 dplot.o profil.o
 
-PPLOTOBJ = pplot.o polplt.o sort.o iopol.o
-PXPLOTOBJ = pxplot.o plutil.o gui.o
-
-XUTILOBJ  = userio.o
-
-FTNLIB = 
-
 ##----------------------------------------------------
 OSOBJ = frplot0.o
 
 # Use this for individual TS-wave frequency plotting
 OSOBJ = frplot.o ntcalc.o osmap.o getosfile.o
 
-##----------------------------------------------------
-PLTOBJ = ../plotlib/libPlt.a 
+PPLOTOBJ = pplot.o polplt.o sort.o iopol.o
+PXPLOTOBJ = pxplot.o plutil.o gui.o
 
-# Use this if you have a copy of the plotlib as a system library
-#PLTOBJ = -lPlt 
+XUTILOBJ  = userio.o
 
 # The extra location arg here is for Linux which places X libs in /usr/X11R6
-PLTLIB = -L/usr/X11R6/lib -lX11
+PLTLIB = -lX11
+FFLAGS = -O -fbounds-check -finit-real=inf -ffpe-trap=invalid,zero -fallow-argument-mismatch
 
-###================================================
-###  Default compilers and flags
-###  FFLOPT used for xsolve.f
-FC = f77
-FFLAGS  = -O 
-FFLOPT  = -O
-INSTALLCMD = install -s
+PLTOBJ = ../plotlib/libPlt.a 
 
-CC = cc
-CFLAGS = -O -DUNDERSCORE
-
-##--------------------------
-
-# Uncomment flags for desired machine...
-
-##--------------------------
-### DEC Alpha with OSF and DEC f77/f90 compiler
-#FC = f77
-#FFLAGS = -fast -O4 -tune host
-#FFLOPT = -fast -O4 -tune host
-#FFLOPT = -fast -O5 -tune host -unroll 3
-# Debug flags
-#FFLAGS = -O0 -g
-#FFLOPT = -fast -O4 -tune host
-##--------------------------
-### SGI setup
-#FC = f77
-#FFLAGS = -O2 -static
-#FFLOPT = -O2 -static
-##--------------------------
-##  Uncomment for RS/6000
-#FFLAGS = -O -qextname
-#FFLOPT = -O -qextname
-##--------------------------
-##  Uncomment for HP-9000
-#FFLAGS = -O +ppu
-#FFLOPT = -O +ppu
-#FTNLIB = -U77
-##--------------------------
-### Absoft Linux f77
-#FC = f77
-#FFLAGS = -O -f -s -W -B108 -N34
-#FFLOPT = -O -f -s -W -B108 -N34
-##--------------------------
-### f2c/gcc compiler driver 
-#FC = fort77
-#FFLAGS = -O2 -fomit-frame-pointer
-#FFLOPT = -O2 -fomit-frame-pointer
-##--------------------------
-### GNU g77
-#FC = g77
-#FFLAGS = -O3 -fomit-frame-pointer
-#FFLOPT = -O3 -fomit-frame-pointer
-# Debug flags (symbols, array bounds)
-#FC = g77
-#FFLAGS = -g -O0 -C
-##--------------------------
-### GNU gfortran
-#FC = gfortran
-#FFLAGS = -O3 -fomit-frame-pointer
-#FFLOPT = -O3 -fomit-frame-pointer
-# Debug flags (symbols, array bounds)
-#FFLAGS = -g -O0 -fbounds-check
-#FFLOPT = -g -O0 -fbounds-check
-#
-### Double precision option
-#FFLAGS = -O3 -fdefault-real-8
-#FFLOPT = -O3 -fdefault-real-8
-#FFLAGS = -O3 -fdefault-real-8 -fbounds-check
-#FFLOPT = -O3 -fdefault-real-8 -fbounds-check
-# Debug flags (symbols, array bounds)
-#FFLAGS = -g -O0 -C
-##--------------------------
-### Gfortran
-FC = gfortran
-CHK = 
-CHK = -fbounds-check -finit-real=inf -ffpe-trap=invalid,zero
-DBL = -fdefault-real-8
-FFLAGS = -O $(CHK) $(DBL)
-FFLOPT = -O $(CHK) $(DBL)
-FTNLIB =
-
-PLTOBJ = ../plotlib/libPlt_gDP.a 
-
-
+include ../config.make
 
 all:	 $(PROGS)
 
-install: 
-	$(INSTALLCMD) $(PROGS) $(BINDIR)
-
 clean:
-	-/bin/rm $(PROGS)
-	-/bin/rm $(XFOILOBJ) $(XUTILOBJ) $(OSOBJ) $(PPLOTOBJ) $(PXPLOTOBJ)
-#	-/bin/rm *.o
+	rm -f $(PROGS)
+	rm -f $(XFOILOBJ) $(XUTILOBJ) $(OSOBJ) $(PPLOTOBJ) $(PXPLOTOBJ)
 
-
-
-xfoil: $(XFOILOBJ) $(XUTILOBJ) $(OSOBJ)
+xfoil: $(XFOILOBJ) $(XUTILOBJ) $(OSOBJ) $(PLTOBJ)
 	$(FC) -o xfoil $(XFOILOBJ) $(XUTILOBJ) $(OSOBJ) $(PLTOBJ) $(PLTLIB) $(FTNLIB)
-	$(INSTALLCMD) xfoil $(BINDIR)
 
 pxplot:	$(PXPLOTOBJ) $(XUTILOBJ)
 	$(FC) -o pxplot $(PXPLOTOBJ) $(XUTILOBJ) $(PLTOBJ) $(PLTLIB) $(FTNLIB)
-	$(INSTALLCMD) pxplot $(BINDIR)
-
+	
 pplot:	$(PPLOTOBJ) $(XUTILOBJ)
 	$(FC) -o pplot $(PPLOTOBJ) $(XUTILOBJ)  $(PLTOBJ) $(PLTLIB) $(FTNLIB)
-	$(INSTALLCMD) pplot $(BINDIR)
 
 blu: blu.o profil.o
 	$(FC) -o blu blu.o profil.o
-	$(INSTALLCMD) blu $(BINDIR)
-
 
 blu.o: $(SRC)/blu.f
 	$(FC) -c $(FFLAGS) $(SRC)/blu.f
@@ -162,13 +59,13 @@ blu.o: $(SRC)/blu.f
 xfoil.o: $(SRC)/xfoil.f  $(SRC)/XFOIL.INC $(SRC)/XBL.INC
 	$(FC) -c $(FFLAGS)  $(SRC)/xfoil.f
 xpanel.o: $(SRC)/xpanel.f  $(SRC)/XFOIL.INC
-	$(FC) -c $(FFLOPT)  $(SRC)/xpanel.f
+	$(FC) -c $(FFLAGS)  $(SRC)/xpanel.f
 xoper.o: $(SRC)/xoper.f  $(SRC)/XFOIL.INC  $(SRC)/BLPAR.INC
 	$(FC) -c $(FFLAGS)  $(SRC)/xoper.f
 xsolve.o: $(SRC)/xsolve.f  $(SRC)/XFOIL.INC
-	$(FC) -c $(FFLOPT)  $(SRC)/xsolve.f
+	$(FC) -c $(FFLAGS)  $(SRC)/xsolve.f
 dplot.o: $(SRC)/dplot.f  $(SRC)/XFOIL.INC
-	$(FC) -c $(FFLOPT)  $(SRC)/dplot.f
+	$(FC) -c $(FFLAGS)  $(SRC)/dplot.f
 xtcam.o: $(SRC)/xtcam.f  $(SRC)/XFOIL.INC $(SRC)/XDES.INC
 	$(FC) -c $(FFLAGS)  $(SRC)/xtcam.f
 xgdes.o: $(SRC)/xgdes.f  $(SRC)/XFOIL.INC $(SRC)/XDES.INC
@@ -221,7 +118,6 @@ pplot.o:  $(SRC)/pplot.f  $(SRC)/PPLOT.INC $(SRC)/PINDEX.INC
 	$(FC) -c $(FFLAGS)  $(SRC)/pplot.f
 pxplot.o: $(SRC)/pxplot.f $(SRC)/PXPLOT.INC
 	$(FC) -c $(FFLAGS)  $(SRC)/pxplot.f
-
 
 frplot0.o: $(SRC)/frplot0.f
 	$(FC) -c $(FFLAGS)  $(SRC)/frplot0.f

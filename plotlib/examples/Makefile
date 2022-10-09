@@ -29,15 +29,11 @@
 ###================================================
 ### This line includes your compiler/make options
 ### with definitions for compiler and flags
-
-include ../config.make
-
+include ../../config.make
 ###================================================
 
-LIB  = ../$(PLTLIB)
-
-#FC = ifort
-#FFLAGS = -r8
+LIB  = ../libPlt.a
+LINKLIB = -lX11
 
 PROGS = volts volts_old \
         symbols symbolsall \
@@ -45,18 +41,14 @@ PROGS = volts volts_old \
 	spectrum cmap2 cmap3 defmap \
         gridtest zoomtest contest mousexy mousexy2
 
-
 examples:  $(PROGS)
-
 
 test:  $(PROGS)
 
 clean:
-	-/bin/rm *.o
-	-/bin/rm $(PROGS)
-	-/bin/rm plot*.ps
-
-
+	rm -f *.o
+	rm -f $(PROGS)
+	rm -f plot*.ps
 
 #Test routines for package
 

@@ -21,23 +21,8 @@
 #                        or drela@mit.edu  
 #***********************************************************************
 
-
-#================================#
-# Makefile for Xplot11 library   #
-#  edit the config.make file to  #
-#  set specific options for your #
-#  system                        #
-#================================#
-
-# Point to your install directory
-#INSTALLDIR = /home/codes/bin
-#INSTALLDIR = /usr/local/lib
-INSTALLDIR = .
-
 # Use these to set default library name (overridden in config.make file) 
 PLTLIB = libPlt.a
-#PLTLIB = libPltDP.a
-
 
 ###========================================================
 ###  Basic plot library object files
@@ -68,8 +53,7 @@ OBJ3D  = plt_3D.o
 
 ###-------------------------------------------------------------------------
 ### Set compiler, compiler flags, name of output object library
-include ./config.make
-
+include ../config.make
 
 ###-------------------------------------------------------------------------
 ### Basic make targets - build library, test programs
@@ -79,22 +63,13 @@ $(PLTLIB):  $(OBJ) $(OBJOLD) $(OBJ3D) $(OBJMISC)
 	$(RANLIB) $(PLTLIB)
 
 test:  $(PLTLIB)
-	(cd examples; make test)
-
-
-###-------------------------------------------------------------------------
-### Utility functions - install the library, clean the directory
-
-install:  $(PLTLIB)
-	mv $(PLTLIB) $(INSTALLDIR)
-	$(RANLIB)   $(INSTALLDIR)/$(PLTLIB)
+	$(MAKE) -C examples test
 
 clean:
-	-/bin/rm $(OBJ) $(OBJOLD) $(OBJ3D) $(OBJMISC)
-	-/bin/rm $(PLTLIB)
-	-/bin/rm plot*.ps
-	(cd examples; make clean)
-
+	rm -f $(OBJ) $(OBJOLD) $(OBJ3D) $(OBJMISC)
+	rm -f $(PLTLIB)
+	rm -f plot*.ps
+	$(MAKE) -C examples clean
 
 ###-------------------------------------------------------------------------
 ### compile plot package routines
@@ -129,15 +104,8 @@ ps_subs.o: ps_subs.f  pltlib.inc
 util-ops.o: util-ops.f 
 	$(FC) -c $(FFLAGS)  util-ops.f
 
-Xwin.o: Xwin.c
-	$(CC) -c $(CFLAGS) Xwin.c
 Xwin2.o: Xwin2.c
 	$(CC) -c $(CFLAGS) Xwin2.c
-
-
-### May need to specify these on a brain-dead make system
-#.f.o:	$(FC) -c $(FFLAGS) $<
-#.c.o:	$(CC) -c $(CFLAGS) $<
 
 
 
